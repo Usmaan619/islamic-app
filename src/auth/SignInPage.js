@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -17,18 +17,30 @@ import { authStyles } from "../styles/authStyle";
 import { GradientHOC } from "../HOC/Gradient.hoc";
 import { loginSvc, loginValidationSchema } from "../utils/helper";
 import CommonButton from "../components/CommonButton";
-import { loginAPI } from "../services/Auth.service";
+import { checkToken, loginAPI } from "../services/Auth.service";
+import { useDispatch } from "react-redux";
 
 const SignIn = ({ navigation }) => {
   const [isShowPassword, setIsShowPassword] = useState(true);
+
+  const dispatch = useDispatch();
 
   const togglePassword = () => {
     setIsShowPassword(!isShowPassword);
   };
 
-  const onSubmit = (value) => {
+  // useEffect(() => {
+  //   new Promise(async (resolve, reject) => {
+  //     const res = await loginAPI();
+  //     console.log("res: ", res);
+  //   });
+  // }, []);
+
+  const onSubmit = async (value) => {
     const users = loginSvc(LOGIN_CREDENTIALS, value);
     console.log("users: ", users);
+
+    await checkToken(dispatch, users?.data?.token);
 
     if (value) {
       if (!users) {

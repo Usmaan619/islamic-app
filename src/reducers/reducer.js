@@ -27,7 +27,7 @@ const AuthReducer = (state = initialState, action) => {
 };
 
 const rootReducer = combineReducers({
-  reducer: AuthReducer,
+  AuthReducer,
 });
 
 export default rootReducer;

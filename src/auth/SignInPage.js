@@ -37,22 +37,31 @@ const SignIn = ({ navigation }) => {
   // }, []);
 
   const onSubmit = async (value) => {
-    const users = loginSvc(LOGIN_CREDENTIALS, value);
-    console.log("users: ", users);
-
-    await checkToken(dispatch, users?.data?.token);
-
-    if (value) {
-      if (!users) {
-        alert("User Not found");
-        return;
-      }
-      if (users) navigation.navigate("Dashboard");
-
-      setTimeout(() => {
-        // unMount();
-      }, 1000);
+    // const users = loginSvc(LOGIN_CREDENTIALS, value);
+    // console.log("users: ", users);
+    try {
+      const res = await loginAPI({
+        email: value?.email,
+        password: value?.password,
+      });
+      console.log("res: ", res);
+    } catch (error) {
+      console.log("error: ", error);
     }
+
+    // await checkToken(dispatch, users?.data?.token);
+
+    // if (value) {
+    //   if (!users) {
+    //     alert("User Not found");
+    //     return;
+    //   }
+    //   if (users) navigation.navigate("Dashboard");
+
+    //   setTimeout(() => {
+    //     // unMount();
+    //   }, 1000);
+    // }
   };
 
   return (

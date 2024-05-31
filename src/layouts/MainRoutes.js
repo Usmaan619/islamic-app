@@ -35,22 +35,22 @@ const MainRoutes = ({ token }) => {
           animation: "slide_from_right",
         }}
       >
+        <Stack.Screen name="Dashboard" component={DashboardPage} />
         <Stack.Screen name="signIn" component={SignInPage} />
         <Stack.Screen name="signUp" component={signUpPage} />
-        <Stack.Screen name="Dashboard" component={DashboardPage} />
       </Stack.Navigator>
     </React.Fragment>
   );
 };
 
-// export default MainRoutes;
-
 const mapStateToProps = (state) => {
+  console.log("state: ", state);
   return {
-    ...state?.auth,
+    ...state?.AuthReducer,
   };
 };
 
 const mapDispatchToProps = {};
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainRoutes);
+

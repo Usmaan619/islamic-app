@@ -7,15 +7,15 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { GradientHOC } from "../HOC/Gradient.hoc";
 import Header from "../components/CommonHeader.component";
-import { ICONS, NEWS_DATA } from "../constants/Contant";
+import { ICONS, MASJID_DATA, NEWS_DATA } from "../constants/Contant";
 import moment from "moment";
 import { BlurView } from "expo-blur";
 import ModalComponent from "../components/Modal.component";
 import * as Location from "expo-location";
-import { loginAPI } from "../services/Auth.service";
+import { loginAPI, masjidDataAPI } from "../services/Auth.service";
 // import MapView from "react-native-maps";
 
 import MapView, { Marker } from "react-native-maps";
@@ -26,8 +26,16 @@ import { Feather } from "@expo/vector-icons";
 
 import { EvilIcons } from "@expo/vector-icons";
 
+import Modal from "react-native-modal";
+import * as Animatable from "react-native-animatable";
+
 const DashboardPage = ({ navigation }) => {
   const screenWidth = useWindowDimensions().width;
+
+  const [masjidData, setMasjidData] = useState();
+
+  const scrollToTextRef = useRef();
+
   const [value, setValue] = useState(null);
   const data = [
     { label: "Indore", value: "1" },
@@ -38,16 +46,28 @@ const DashboardPage = ({ navigation }) => {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const toggleModal = () => {
+  const [selectedMasjid, setSelectedMasjid] = useState(null);
+
+  const scrollRef = useRef();
+  const onPressTouch = () => {
+    scrollRef.current?.scrollTo({
+      y: 0,
+      animated: true,
+    });
+  };
+  const toggleModal = (masjid) => {
+    setSelectedMasjid(masjid);
     setIsModalVisible(!isModalVisible);
   };
 
-  // useEffect(() => {
-  //   new Promise(async (resolve, reject) => {
-  //     const res = await loginAPI();
-  //     console.log("res: ", res);
-  //   });
-  // }, []);
+  useEffect(() => {
+    new Promise(async (resolve, reject) => {
+      const res = await masjidDataAPI();
+      setMasjidData(res?.data);
+      console.log("res: ", res);
+      console.log("masjidData: ", masjidData);
+    });
+  }, []);
 
   const cardWidth = screenWidth * 0.44; // 40% of the screen width
   const cardHeight = cardWidth * 1.36; // maintaining the aspect ratio based on original dimensions
@@ -114,7 +134,7 @@ const DashboardPage = ({ navigation }) => {
   console.log("text: ", text);
 
   return (
-    <ScrollView style={{ flexGrow: 1 }}>
+    <ScrollView style={{ flexGrow: 1 }} ref={scrollRef}>
       <Header onSearch={handleSearch} />
 
       {/* <Text className="text-white">{text}</Text> */}
@@ -138,7 +158,7 @@ const DashboardPage = ({ navigation }) => {
 
           <View className="flex-row mt-3 mb-6">
             <ScrollView horizontal={true}>
-              {NEWS_DATA?.map((d, idx) => (
+              {MASJID_DATA?.map((d, idx) => (
                 <View
                   key={idx}
                   className="border border-yellow-400 p-2 rounded-3xl text-center flex-row mx-1 overflow-hidden"
@@ -150,22 +170,23 @@ const DashboardPage = ({ navigation }) => {
           </View>
 
           <View className="flex gap-3 items-center mb-8">
-            {NEWS_DATA?.map((d, idx) => (
+            {/* change to masid data key */}
+            {MASJID_DATA?.map((d, idx) => (
               <BlurView
-                className="h-32 w-full  rounded-lg"
+                className="h-28 w-full  rounded-lg"
                 key={idx}
                 blurAmount={0.5}
                 style={{ overflow: "hidden" }}
               >
-                <TouchableOpacity onPress={toggleModal}>
-                  <View className="flex-row justify-between">
+                <TouchableOpacity onPress={() => toggleModal(d)}>
+                  <View className="flex-row justify-between items-center">
                     <Text
-                      className="truncate w-60 pt-4 text-base font-semibold text-white"
+                      className="truncate w-60  text-base font-semibold text-white"
                       style={{ paddingStart: 14 }}
                     >
-                      {d?.title}
+                      {d?.name}
                     </Text>
-                    <View className="p-2">
+                    <View className="pt-2" style={{ paddingRight: 10 }}>
                       <Image
                         className="h-20 w-20"
                         source={ICONS?.coinBaseImg}
@@ -204,6 +225,7 @@ const DashboardPage = ({ navigation }) => {
             onFocus={() => setIsFocus(true)}
             onBlur={() => setIsFocus(false)}
             onChange={(item) => {
+              onPressTouch();
               setValue(item.value);
               setIsFocus(false);
             }}
@@ -218,8 +240,53 @@ const DashboardPage = ({ navigation }) => {
           />
         </View>
       </View>
+      {/* Modal */}
+      {selectedMasjid && (
+        <Modal
+          animationType="fade"
+          visible={isModalVisible}
+          onRequestClose={() => setIsModalVisible(false)}
+          onBackdropPress={() => setIsModalVisible(false)}
+          onBackButtonPress={() => setIsModalVisible(false)} // Optional: for Android back button press
+        >
+          <View style={style.centeredView}>
+            <View style={style.modalView}>
+              <Text className="text-md font-semibold mb-4">TIMES</Text>
 
-      <ModalComponent visible={isModalVisible} onClose={toggleModal} />
+              <View className="w-full">
+                <View className="flex-row justify-between w-full">
+                  {selectedMasjid?.times?.map((time, idx) => (
+                    <View className="h-7 w-auto " key={idx}>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          flexWrap: "wrap",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Text style={style.items}>Fajr: {time.Fajr}</Text>
+                        <Text style={style.items}>Zohar: {time.Zohar}</Text>
+                        <Text style={style.items}>Asar: {time.Asar}</Text>
+                        <Text style={style.items}>Magrib: {time.Magrib}</Text>
+                        <Text style={style.items}>Isha: {time.Isha}</Text>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+
+                <View className="flex-row  w-full justify-between  items-center mt-32">
+                  <Text className="font-bold text-black text-sm text-start">
+                    Imam name
+                  </Text>
+                  <Text className="font-bold text-black text-sm text-end">
+                    Test name
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      )}
     </ScrollView>
   );
 };
@@ -324,6 +391,49 @@ const style = {
   inputSearchStyle: {
     height: 40,
     fontSize: 16,
+  },
+
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    width: "auto",
+    height: 280,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  openButton: {
+    backgroundColor: "#F194FF",
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    // textAlign: "center",
+  },
+
+  items: {
+    width: "45%", // Adjust this to fit your design needs
+    marginVertical: 8,
+    padding: 8,
+    backgroundColor: "#f0f0f0",
+    textAlign: "center",
+    fontWeight: "600",
   },
 };
 

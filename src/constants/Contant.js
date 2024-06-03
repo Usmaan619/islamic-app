@@ -514,3 +514,162 @@ export const LOGIN_CREDENTIALS = [
     password: "Faizan@123",
   },
 ];
+
+export const MASJID_DATA = [
+  {
+    name: "ya_rasulallah_GP",
+    times: [
+      {
+        Fajr: "5:10",
+        Zohar: "1:30",
+        Asar: "5:30",
+        Magrib: "7:09",
+        Isha: "9:00",
+      },
+    ],
+  },
+  {
+    name: "Mohammadi_GP",
+    times: [
+      {
+        Fajr: "5:15",
+        Zohar: "1:45",
+        Asar: "5:30",
+        Magrib: "7:09",
+        Isha: "9:00",
+      },
+    ],
+  },
+  {
+    name: "Ali_GP",
+    times: [
+      {
+        Fajr: "5:15",
+        Zohar: "1:00",
+        Asar: "5:30",
+        Magrib: "7:09",
+        Isha: "9:00",
+      },
+    ],
+  },
+  {
+    name: "Usman-e-gani_GP",
+    times: [
+      {
+        Fajr: "5:15",
+        Zohar: "1:00",
+        Asar: "5:30",
+        Magrib: "7:09",
+        Isha: "9:00",
+      },
+    ],
+  },
+  {
+    name: "Fatima_GP",
+    times: [
+      {
+        Fajr: "5:15",
+        Zohar: "1:00",
+        Asar: "5:30",
+        Magrib: "7:09",
+        Isha: "9:00",
+      },
+    ],
+  },
+  {
+    name: "Bilal_GP",
+    times: [
+      {
+        Fajr: "5:15",
+        Zohar: "1:00",
+        Asar: "5:30",
+        Magrib: "7:09",
+        Isha: "9:00",
+      },
+    ],
+  },
+  {
+    name: "Usmaniya_CN",
+    times: [
+      {
+        Fajr: "5:15",
+        Zohar: "1:00",
+        Asar: "5:30",
+        Magrib: "7:09",
+        Isha: "9:00",
+      },
+    ],
+  },
+  {
+    name: "Bilal_luniyapura",
+    times: [
+      {
+        Fajr: "5:15",
+        Zohar: "1:00",
+        Asar: "5:30",
+        Magrib: "7:09",
+        Isha: "9:00",
+      },
+    ],
+  },
+  {
+    name: "Gulzar_main_road",
+    times: [
+      {
+        Fajr: "5:15",
+        Zohar: "1:00",
+        Asar: "5:30",
+        Magrib: "7:09",
+        Isha: "9:00",
+      },
+    ],
+  },
+  {
+    name: "Tukoganj",
+    times: [
+      {
+        Fajr: "5:15",
+        Zohar: "1:00",
+        Asar: "5:30",
+        Magrib: "7:09",
+        Isha: "9:00",
+      },
+    ],
+  },
+  {
+    name: "Ahmed_raza_Kakad",
+    times: [
+      {
+        Fajr: "5:15",
+        Zohar: "1:00",
+        Asar: "5:30",
+        Magrib: "7:09",
+        Isha: "9:00",
+      },
+    ],
+  },
+  {
+    name: "Pakiza_lifestyle_KHJ",
+    times: [
+      {
+        Fajr: "5:15",
+        Zohar: "1:00",
+        Asar: "5:30",
+        Magrib: "7:09",
+        Isha: "9:00",
+      },
+    ],
+  },
+  {
+    name: "Noori_Azad_nagar",
+    times: [
+      {
+        Fajr: "5:15",
+        Zohar: "1:00",
+        Asar: "5:30",
+        Magrib: "7:09",
+        Isha: "9:00",
+      },
+    ],
+  },
+];

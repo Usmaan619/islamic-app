@@ -18,9 +18,12 @@ import { authStyles } from "../styles/authStyle";
 import { GradientHOC } from "../HOC/Gradient.hoc";
 import { signUpValidationSchema } from "../utils/helper";
 import CommonButton from "../components/CommonButton";
-
+import { checkToken, registerAPI } from "../services/Auth.service";
+import { useDispatch } from "react-redux";
 
 const SignUp = ({ navigation }) => {
+  const dispatch = useDispatch();
+
   const [isShowPassword, setIsShowPassword] = useState(true);
   const [isShowPasswordConf, setIsShowPasswordConf] = useState(true);
 
@@ -32,13 +35,27 @@ const SignUp = ({ navigation }) => {
     setIsShowPasswordConf(!isShowPasswordConf);
   };
 
-  const onSubmit = (val) => {
-    console.log("val: ", val);
+  const onSubmit = async (val) => {
+    try {
+      console.log("val: ", val);
 
-    navigation.navigate("DocumentVerif", { registerDetails: val });
+      const res = await registerAPI({
+        email: val?.email,
+        password: val?.password,
+        mobile: val?.phoneNumber,
+      });
+      console.log("res: ", res);
+      await checkToken(dispatch, res?.data?.token);
+
+      //   if (!res?.success) {
+      //     alert("User Not found");
+      //     return;
+      //   }
+      //   if (res?.success) navigation.navigate("Dashboard");
+    } catch (error) {
+      console.log("error: ", error);
+    }
   };
-
-
 
   return (
     <ScrollView>
@@ -65,10 +82,16 @@ const SignUp = ({ navigation }) => {
           formikFn = formikProps;
           return (
             <View style={styles.signUpcontainer}>
-              <View className='flex-row justify-center items-center'>
-                <Image source={ICONS?.intelligenceMainWhiteImg} resizeMode="cover" className='h-[90px] w-[170px] overflow-hidden' />
+              <View className="flex-row justify-center items-center">
+                <Image
+                  source={ICONS?.intelligenceMainWhiteImg}
+                  resizeMode="cover"
+                  className="h-[90px] w-[170px] overflow-hidden"
+                />
               </View>
-              <Text className="text-center  text-lg font-semibold text-white">Create New Account</Text>
+              <Text className="text-center  text-lg font-semibold text-white">
+                Create New Account
+              </Text>
 
               <View style={styles.signUpInputMainContainer}>
                 <SafeAreaView style={styles.signUpInputSubContainer}>

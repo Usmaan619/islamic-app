@@ -517,7 +517,7 @@ export const LOGIN_CREDENTIALS = [
 
 export const MASJID_DATA = [
   {
-    name: "ya_rasulallah_GP",
+    name: "Ya Rasulallah GP",
     times: [
       {
         Fajr: "5:10",
@@ -529,7 +529,7 @@ export const MASJID_DATA = [
     ],
   },
   {
-    name: "Mohammadi_GP",
+    name: "Mohammadi GP",
     times: [
       {
         Fajr: "5:15",
@@ -541,7 +541,7 @@ export const MASJID_DATA = [
     ],
   },
   {
-    name: "Ali_GP",
+    name: "Ali GP",
     times: [
       {
         Fajr: "5:15",
@@ -553,7 +553,7 @@ export const MASJID_DATA = [
     ],
   },
   {
-    name: "Usman-e-gani_GP",
+    name: "Usman e gani GP",
     times: [
       {
         Fajr: "5:15",
@@ -565,7 +565,7 @@ export const MASJID_DATA = [
     ],
   },
   {
-    name: "Fatima_GP",
+    name: "Fatima GP",
     times: [
       {
         Fajr: "5:15",
@@ -577,7 +577,7 @@ export const MASJID_DATA = [
     ],
   },
   {
-    name: "Bilal_GP",
+    name: "Bilal GP",
     times: [
       {
         Fajr: "5:15",
@@ -589,7 +589,7 @@ export const MASJID_DATA = [
     ],
   },
   {
-    name: "Usmaniya_CN",
+    name: "Usmaniya CN",
     times: [
       {
         Fajr: "5:15",
@@ -601,7 +601,7 @@ export const MASJID_DATA = [
     ],
   },
   {
-    name: "Bilal_luniyapura",
+    name: "Bilal luniyapura",
     times: [
       {
         Fajr: "5:15",
@@ -613,7 +613,7 @@ export const MASJID_DATA = [
     ],
   },
   {
-    name: "Gulzar_main_road",
+    name: "Gulzar main road",
     times: [
       {
         Fajr: "5:15",
@@ -637,7 +637,7 @@ export const MASJID_DATA = [
     ],
   },
   {
-    name: "Ahmed_raza_Kakad",
+    name: "Ahmed raza Kakad",
     times: [
       {
         Fajr: "5:15",
@@ -649,7 +649,7 @@ export const MASJID_DATA = [
     ],
   },
   {
-    name: "Pakiza_lifestyle_KHJ",
+    name: "Pakiza lifestyle KHJ",
     times: [
       {
         Fajr: "5:15",
@@ -661,7 +661,7 @@ export const MASJID_DATA = [
     ],
   },
   {
-    name: "Noori_Azad_nagar",
+    name: "Noori Azad nagar",
     times: [
       {
         Fajr: "5:15",

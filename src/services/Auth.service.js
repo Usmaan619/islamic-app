@@ -13,7 +13,7 @@ export const registerAPI = async (payload) => {
 
 export const loginAPI = async (payload) => {
   try {
-    return await axios.post(`${environment?.apiUrl}formlogin`, payload);
+    return await axios.post(`${environment?.apiUrl}login`, payload);
   } catch (error) {
     console.log("error: ", error);
   }

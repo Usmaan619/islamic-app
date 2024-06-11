@@ -10,25 +10,16 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { GradientHOC } from "../HOC/Gradient.hoc";
 import Header from "../components/CommonHeader.component";
-import { ICONS, MASJID_DATA, NEWS_DATA } from "../constants/Contant";
+import { ICONS, MASJID_DATA } from "../constants/Contant";
 import moment from "moment";
 import { BlurView } from "expo-blur";
-import ModalComponent from "../components/Modal.component";
 import * as Location from "expo-location";
-import { loginAPI, masjidDataAPI } from "../services/Auth.service";
-// import MapView from "react-native-maps";
-
-import MapView, { Marker } from "react-native-maps";
-
+import { masjidDataAPI } from "../services/Auth.service";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { Dropdown } from "react-native-element-dropdown";
-
-import { Feather } from "@expo/vector-icons";
-
 import { EvilIcons } from "@expo/vector-icons";
-
 import Modal from "react-native-modal";
-import * as Animatable from "react-native-animatable";
-
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 const DashboardPage = ({ navigation }) => {
   const screenWidth = useWindowDimensions().width;
 
@@ -48,6 +39,8 @@ const DashboardPage = ({ navigation }) => {
 
   const [selectedMasjid, setSelectedMasjid] = useState(null);
 
+  const [type, setType] = useState("");
+
   const scrollRef = useRef();
   const onPressTouch = () => {
     scrollRef.current?.scrollTo({
@@ -55,7 +48,8 @@ const DashboardPage = ({ navigation }) => {
       animated: true,
     });
   };
-  const toggleModal = (masjid) => {
+  const toggleModal = (masjid, type) => {
+    setType(type);
     setSelectedMasjid(masjid);
     setIsModalVisible(!isModalVisible);
   };
@@ -63,18 +57,16 @@ const DashboardPage = ({ navigation }) => {
   useEffect(() => {
     new Promise(async (resolve, reject) => {
       const res = await masjidDataAPI();
-      setMasjidData(res?.data);
-      console.log("res: ", res);
-      console.log("masjidData: ", masjidData);
+      setMasjidData(res?.data ? res?.data : MASJID_DATA);
+
+      resolve(1);
     });
   }, []);
 
   const cardWidth = screenWidth * 0.44; // 40% of the screen width
   const cardHeight = cardWidth * 1.36; // maintaining the aspect ratio based on original dimensions
 
-  const handleSearch = () => {
-    console.log("te");
-  };
+  const handleSearch = () => {};
 
   const SOCIAL_DATA = [
     {
@@ -120,7 +112,7 @@ const DashboardPage = ({ navigation }) => {
       }
 
       let currentLocation = await Location.getCurrentPositionAsync({});
-      console.log("currentLocation: ", currentLocation);
+
       setLocation(currentLocation);
     })();
   }, []);
@@ -131,7 +123,28 @@ const DashboardPage = ({ navigation }) => {
   } else if (location) {
     text = JSON.stringify(location);
   }
-  console.log("text: ", text);
+
+  const [mapRegion, setmapRegion] = useState({
+    latitude: 22.7196, // Indore, India
+    longitude: 75.8573, // Indore, India
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
+
+  const onRegionChange = (region) => {
+    setmapRegion(region);
+  };
+
+  const [times, setTimes] = useState(selectedMasjid?.times || []);
+
+  // Handle time change
+  const handleTimeChange = (idx, prayerName, value) => {
+    const updatedTimes = [...times];
+
+    // updatedTimes[idx][prayer] = value;
+
+    setTimes(updatedTimes);
+  };
 
   return (
     <ScrollView style={{ flexGrow: 1 }} ref={scrollRef}>
@@ -173,34 +186,36 @@ const DashboardPage = ({ navigation }) => {
             {/* change to masid data key */}
             {MASJID_DATA?.map((d, idx) => (
               <BlurView
-                className="h-28 w-full  rounded-lg"
+                className="h-24 w-full  rounded-lg"
                 key={idx}
                 blurAmount={0.5}
                 style={{ overflow: "hidden" }}
               >
-                <TouchableOpacity onPress={() => toggleModal(d)}>
-                  <View className="flex-row justify-between items-center">
-                    <Text
-                      className="truncate w-60  text-base font-semibold text-white"
+                <View className="flex-row justify-between items-center">
+                  <TouchableOpacity onPress={() => toggleModal(d, "view")}>
+                    <View
+                      className="grid gap-2 pt-4"
                       style={{ paddingStart: 14 }}
                     >
-                      {d?.name}
-                    </Text>
-                    <View className="pt-2" style={{ paddingRight: 10 }}>
-                      <Image
-                        className="h-20 w-20"
-                        source={ICONS?.coinBaseImg}
-                        resizeMode="cover"
+                      <Text className="truncate w-60  text-base font-semibold text-white">
+                        {d?.name}
+                      </Text>
+                      <Text className="text-gray-300 font-semibold text-xs">
+                        {moment().format("LLL")}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => toggleModal(d, "edit")}>
+                    <View className="pt-4" style={{ paddingRight: 10 }}>
+                      <MaterialCommunityIcons
+                        name="clock-edit"
+                        size={44}
+                        color="#fff"
+                        style={{ paddingEnd: 12 }}
                       />
                     </View>
-                  </View>
-                  <Text
-                    className="text-gray-300 font-semibold text-xs"
-                    style={{ paddingStart: 12 }}
-                  >
-                    {moment().format("LLL")}
-                  </Text>
-                </TouchableOpacity>
+                  </TouchableOpacity>
+                </View>
               </BlurView>
             ))}
           </View>
@@ -239,6 +254,26 @@ const DashboardPage = ({ navigation }) => {
             )}
           />
         </View>
+
+        <MapView
+          pitchEnabled={false}
+          rotateEnabled={false}
+          scrollEnabled={false}
+          zoomEnabled={false}
+          style={{ flex: 1, alignSelf: "stretch", height: 300, width: "auto" }}
+          region={mapRegion}
+          onRegionChange={(region) => setmapRegion(region)}
+        >
+          {location && (
+            <Marker
+              coordinate={{
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+              }}
+              title="Current location"
+            />
+          )}
+        </MapView>
       </View>
       {/* Modal */}
       {selectedMasjid && (
@@ -251,28 +286,97 @@ const DashboardPage = ({ navigation }) => {
         >
           <View style={style.centeredView}>
             <View style={style.modalView}>
-              <Text className="text-md font-semibold mb-4">TIMES</Text>
+              {type === "view" && (
+                <Text className="text-md font-semibold mb-4">JAMAT TIMES</Text>
+              )}
+
+              {type === "edit" && (
+                <Text className="text-md font-semibold mb-4">
+                  EDIT JAMAT TIMES
+                </Text>
+              )}
 
               <View className="w-full">
-                <View className="flex-row justify-between w-full">
-                  {selectedMasjid?.times?.map((time, idx) => (
-                    <View className="h-7 w-auto " key={idx}>
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          flexWrap: "wrap",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <Text style={style.items}>Fajr: {time.Fajr}</Text>
-                        <Text style={style.items}>Zohar: {time.Zohar}</Text>
-                        <Text style={style.items}>Asar: {time.Asar}</Text>
-                        <Text style={style.items}>Magrib: {time.Magrib}</Text>
-                        <Text style={style.items}>Isha: {time.Isha}</Text>
+                {type === "view" && (
+                  <View className="flex-row justify-between w-full">
+                    {selectedMasjid?.times?.map((time, idx) => (
+                      <View className="h-7 w-auto " key={idx}>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            flexWrap: "wrap",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Text style={style.items}>Fajr: {time.Fajr}</Text>
+                          <Text style={style.items}>Zohar: {time.Zohar}</Text>
+                          <Text style={style.items}>Asar: {time.Asar}</Text>
+                          <Text style={style.items}>Magrib: {time.Magrib}</Text>
+                          <Text style={style.items}>Isha: {time.Isha}</Text>
+                        </View>
                       </View>
-                    </View>
-                  ))}
-                </View>
+                    ))}
+                  </View>
+                )}
+
+                {type === "edit" && (
+                  <View style={style.timesContainer}>
+                    {selectedMasjid?.times.map((time, idx) => (
+                      <View style={style.timeRow} key={idx}>
+                        <View style={style.inputContainer}>
+                          <Text style={style.label}>Fajr</Text>
+                          <TextInput
+                            style={style.input}
+                            value={time.Fajr}
+                            onChangeText={(value) =>
+                              handleTimeChange(idx, "Fajr", value)
+                            }
+                          />
+                        </View>
+                        <View style={style.inputContainer}>
+                          <Text style={style.label}>Zohar</Text>
+                          <TextInput
+                            style={style.input}
+                            value={time.Zohar}
+                            onChangeText={(value) =>
+                              handleTimeChange(idx, "Zohar", value)
+                            }
+                          />
+                        </View>
+                        <View style={style.inputContainer}>
+                          <Text style={style.label}>Asar</Text>
+                          <TextInput
+                            style={style.input}
+                            value={time.Asar}
+                            onChangeText={(value) =>
+                              handleTimeChange(idx, "Asar", value)
+                            }
+                          />
+                        </View>
+                        <View style={style.inputContainer}>
+                          <Text style={style.label}>Magrib</Text>
+                          <TextInput
+                            style={style.input}
+                            value={time.Magrib}
+                            onChangeText={(value) =>
+                              handleTimeChange(idx, "Magrib", value)
+                            }
+                          />
+                        </View>
+                        <View style={style.inputContainer}>
+                          <Text style={style.label}>Isha</Text>
+                          <TextInput
+                            style={style.input}
+                            value={time.Isha}
+                            onChangeText={(value) =>
+                              handleTimeChange(idx, "Isha", value)
+                            }
+                          />
+                        </View>
+                      </View>
+                    ))}
+                  </View>
+                )}
 
                 <View className="flex-row  w-full justify-between  items-center mt-32">
                   <Text className="font-bold text-black text-sm text-start">
@@ -406,7 +510,7 @@ const style = {
     alignItems: "center",
     shadowColor: "#000",
     width: "auto",
-    height: 280,
+    // height: "auto",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -434,6 +538,32 @@ const style = {
     backgroundColor: "#f0f0f0",
     textAlign: "center",
     fontWeight: "600",
+  },
+
+  inputContainer: {
+    width: "48%", // Adjust width as needed
+    marginBottom: 10,
+  },
+  label: {
+    fontSize: 14,
+    color: "black",
+    marginBottom: 5,
+  },
+  input: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+  },
+  timeRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
+  timesContainer: {
+    width: "100%",
+    marginBottom: 20,
   },
 };
 

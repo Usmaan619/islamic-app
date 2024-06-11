@@ -36,8 +36,8 @@ const MainRoutes = ({ token }) => {
         }}
       >
         <Stack.Screen name="Dashboard" component={DashboardPage} />
-        <Stack.Screen name="signIn" component={SignInPage} />
         <Stack.Screen name="signUp" component={signUpPage} />
+        <Stack.Screen name="signIn" component={SignInPage} />
       </Stack.Navigator>
     </React.Fragment>
   );
@@ -53,4 +53,3 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = {};
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainRoutes);
-

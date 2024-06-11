@@ -41,7 +41,7 @@ const SignIn = ({ navigation }) => {
     // console.log("users: ", users);
     try {
       const res = await loginAPI({
-        email: value?.email,
+        username: value?.email,
         password: value?.password,
       });
       console.log("res: ", res);

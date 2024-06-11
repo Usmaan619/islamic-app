@@ -2,7 +2,7 @@ export const environment = {
   development: true,
   /* change ip-address your device  **/
   apiUrl:
-    "https://7e3a-2401-4900-1ca3-696a-116c-70fc-3855-387b.ngrok-free.app/",
+    "https://a686-2401-4900-1ca3-6757-48d6-d13a-34e9-eadb.ngrok-free.app/",
 
   //  * production URL  ** //
   //   apiUrl: "https:// test /api/",

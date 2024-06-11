@@ -20,6 +20,7 @@ import { signUpValidationSchema } from "../utils/helper";
 import CommonButton from "../components/CommonButton";
 import { checkToken, registerAPI } from "../services/Auth.service";
 import { useDispatch } from "react-redux";
+import { number } from "yup";
 
 const SignUp = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -42,10 +43,10 @@ const SignUp = ({ navigation }) => {
       const res = await registerAPI({
         email: val?.email,
         password: val?.password,
-        mobile: val?.phoneNumber,
+        number: val?.phoneNumber,
       });
       console.log("res: ", res);
-      await checkToken(dispatch, res?.data?.token);
+      // await checkToken(dispatch, res?.data?.session_token);
 
       //   if (!res?.success) {
       //     alert("User Not found");
